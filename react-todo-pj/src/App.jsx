@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid'; // UUID生成関数をインポート
 
 const TaskManager = () => {
   // タスクの一覧を管理する
@@ -7,21 +8,15 @@ const TaskManager = () => {
   // 現在のタスク入力値を管理する
   const [taskInput, setTaskInput] = useState('');
 
-  // タスクに一意なIDを付与する
-  const [nextId, setNextId] = useState(0);
-
   // タスクを追加する処理
   const handleAddTask = (e) => {
     e.preventDefault(); // フォームのデフォルトの送信動作を防ぐ
 
     // 新しいタスクを追加し、状態を更新する
-    setTasks([...tasks, { id: nextId, task: taskInput, completed: false }]);
+    setTasks([...tasks, { id: uuidv4(), task: taskInput, completed: false }]);
 
     // 入力欄を空にする
     setTaskInput('');
-
-    // 次のタスク用のIDを1増やす
-    setNextId(nextId + 1);
   };
 
   // 指定したIDのタスクを削除する処理
