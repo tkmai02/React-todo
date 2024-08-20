@@ -1,35 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+const TaskManager = () => {
+  // タスクの一覧を管理する
+  const [tasks, setTasks] = useState([]);
+
+  // 現在のタスク入力値を管理する
+  const [taskInput, setTaskInput] = useState('');
+
+  // タスクに一意なIDを付与する
+  const [nextId, setNextId] = useState(0);
+
+  // タスクを追加する処理
+  const handleAddTask = (e) => {
+    e.preventDefault(); // フォームのデフォルトの送信動作を防ぐ
+
+    // 新しいタスクを追加し、状態を更新する
+    setTasks([...tasks, { id: nextId, task: taskInput, completed: false }]);
+
+    // 入力欄を空にする
+    setTaskInput('');
+
+    // 次のタスク用のIDを1増やす
+    setNextId(nextId + 1);
+  };
+
+  // 指定したIDのタスクを削除する処理
+  const handleDeleteTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  // タスクの完了状態を切り替える処理
+  const handleToggleComplete = (id) => {
+    setTasks(tasks.map(task =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <h1>タスク一覧</h1>
 
-export default App
+      <ul>
+        {tasks.map((task) => (
+          <li
+            key={task.id}
+            style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+          >
+            <span>
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => handleToggleComplete(task.id)}
+              />
+            </span>
+            <span>{task.task}</span>
+            <button onClick={() => handleDeleteTask(task.id)}>削除</button>
+          </li>
+        ))}
+      </ul>
+
+      <form onSubmit={handleAddTask}>
+        <div>
+          <input
+            value={taskInput}
+            onChange={(e) => setTaskInput(e.target.value)}
+          />
+        </div>
+        <div>
+          <button type="submit">タスクを登録</button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default TaskManager;
